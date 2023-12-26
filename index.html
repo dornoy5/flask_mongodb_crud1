@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>School Management System</title>
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>School Management System</h1>
+    
+    <input type="text" id="studentName" placeholder="Enter student name">
+    <button onclick="addStudent()">Add Student</button>
+    <button onclick="getStudents()">Get Students</button>
+    <br>
+    <input type="number" id="studentId" placeholder="Enter student ID">
+    <button onclick="updateStudent()">Update Student</button>
+    <button onclick="deleteStudent()">Delete Student</button>
+
+    <div id="studentsList"></div>
+
+    <script>
+        
+        function getStudents() {
+            const MY_SERVER = 'http://127.0.0.1:5000'
+            axios.get(MY_SERVER+'/students')
+                .then(function (response) {
+                    const students = response.data;
+                    let html = '<ul>';
+                    for(let student of students) {
+                        html += `<li>ID: ${student.id}, Name: ${student.name}</li>`;
+                    }
+                    html += '</ul>';
+                    document.getElementById('studentsList').innerHTML = html;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const MY_SERVER = 'http://127.0.0.1:5000'
+            axios.post(MY_SERVER+'/students', { name: name })
+                .then(function (response) {
+                    console.log(response);
+                    getStudents(); // Refresh the list
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        function updateStudent() {
+            const id = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const MY_SERVER = 'http://127.0.0.1:5000'
+            axios.put(MY_SERVER+`/students/${id}`, { name: name })
+                .then(function (response) {
+                    console.log(response);
+                    getStudents(); // Refresh the list
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        function deleteStudent() {
+            const id = document.getElementById('studentId').value;
+            const MY_SERVER = 'http://127.0.0.1:5000'
+            axios.delete(MY_SERVER+`/students/${id}`)
+                .then(function (response) {
+                    console.log(response);
+                    getStudents(); // Refresh the list
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    </script>
+</body>
+</html>
